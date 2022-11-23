@@ -1,10 +1,38 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useToken from "../../hooks/useToken";
+import { AuthContext } from "../context/AuthProvider";
 
 const Login = () => {
   const { register, formState: { errors }, handleSubmit } = useForm();
-  const handleLogin = data => console.log(data);
+  const {logIn} = useContext(AuthContext);
+  const [loginError, setLoginError] = useState('');
+  const [loginUserEmail, setLoginUserEmail] = useState('');
+  const [token] = useToken(loginUserEmail);
+  const navigate = useNavigate();
+
+  if(token){
+    navigate('/')
+  }
+
+  const handleLogin = data => {
+    console.log(data)
+    setLoginError('');
+    logIn(data.email, data.password)
+    .then(res => {
+      const user = res.user;
+      console.log(user);
+      setLoginUserEmail(data.email);
+      
+    })
+    .catch(err => {
+      console.log(err.message);
+      setLoginError(err.message)
+    })
+  };
+  
+
   return (
     <div className="h-[800px] flex justify-center items-center">
       <div className="w-96 p-6">
@@ -29,6 +57,11 @@ const Login = () => {
             className="input input-bordered w-full"
           />
           {errors.password && <p className="text-red-500" role="alert">{errors.password?.message}</p>}
+          <div>
+            {
+              loginError && <p className="text-red-500 my-2">{loginError}</p>
+            }
+          </div>
           <label className="label">
             <span className="label-text">Forgot Password?</span>
           </label>
