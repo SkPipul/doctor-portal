@@ -107,7 +107,7 @@ const SignUp = () => {
               {
                 minLength: {
                   value: 6,
-                  message: "Password should be 8 character or longer",
+                  message: "Password should be 6 character or longer",
                 },
               }
             )}
